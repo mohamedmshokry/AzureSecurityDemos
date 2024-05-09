@@ -36,7 +36,7 @@ public class HomeController : Controller
     {
         try{
        //donwload an image from blob storage and display it as an image on a page
-        BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("AnonymousStorageAccount"));
+        BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(_configuration.GetConnectionString("StorageAccount")));
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("anonymousimages");
         BlobClient blobClient = containerClient.GetBlobClient("MSLogo.png");
         var blobDownloadInfo = blobClient.Download();
@@ -53,7 +53,7 @@ public class HomeController : Controller
     {
         try{
        //donwload an image from blob storage and display it as an image on a page
-        BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(_configuration.GetConnectionString("SecureStorageAccount")), new DefaultAzureCredential(), null);
+        BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(_configuration.GetConnectionString("StorageAccount")), new DefaultAzureCredential(), null);
 
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("secureimages");
         BlobClient blobClient = containerClient.GetBlobClient("MSLogo.png");
