@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SecurityDemos.Models;
 using Azure.Storage.Blobs;
+using Azure.Identity;
 
 namespace SecurityDemos.Controllers;
 
@@ -9,13 +10,11 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IConfiguration _configuration; 
-    private readonly string _blobServiceConnectionString;
 
     public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
     {
         _configuration = configuration;
         _logger = logger;
-        _blobServiceConnectionString = _configuration.GetConnectionString("StorageAccount");
     }
 
     public IActionResult Index()
@@ -37,7 +36,7 @@ public class HomeController : Controller
     {
         try{
        //donwload an image from blob storage and display it as an image on a page
-        BlobServiceClient blobServiceClient = new BlobServiceClient(_blobServiceConnectionString);
+        BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("AnonymousStorageAccount"));
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("anonymousimages");
         BlobClient blobClient = containerClient.GetBlobClient("MSLogo.png");
         var blobDownloadInfo = blobClient.Download();
@@ -54,7 +53,8 @@ public class HomeController : Controller
     {
         try{
        //donwload an image from blob storage and display it as an image on a page
-        BlobServiceClient blobServiceClient = new BlobServiceClient(_blobServiceConnectionString);
+        BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(_configuration.GetConnectionString("SecureStorageAccount")), new DefaultAzureCredential(), null);
+
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("secureimages");
         BlobClient blobClient = containerClient.GetBlobClient("MSLogo.png");
         var blobDownloadInfo = blobClient.Download();
